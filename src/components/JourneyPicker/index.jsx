@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { CityOptions } from '../CityOptions';
 import mapImage from './img/map.svg';
+import { DataOptions } from '../../DataOption';
 import './style.css';
 
 export const JourneyPicker = ({ onJourneyChange }) => {
   const [fromCity, setFromCity] = useState('');
   const [toCity, setToCity] = useState('');
   const [date, setDate] = useState('');
+  const [dates, setDates] = useState([]);
   const [cities, setCities] = useState([]);
   useEffect(() => {
     fetch('https://apps.kodim.cz/daweb/leviexpress/api/cities')
@@ -15,6 +17,13 @@ export const JourneyPicker = ({ onJourneyChange }) => {
       })
       .then((data) => {
         setCities(data.results);
+      });
+    fetch('https://apps.kodim.cz/daweb/leviexpress/api/dates')
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        setDates(data.results);
       });
   }, []);
 
@@ -43,12 +52,17 @@ export const JourneyPicker = ({ onJourneyChange }) => {
           </label>
           <label>
             <div className="journey-picker__label">Datum:</div>
-            <select
-              onChange={(udalost) => setDate(udalost.target.value)}
-            ></select>
+            <select onChange={(udalost) => setDate(udalost.target.value)}>
+              <DataOptions dates={dates} />
+            </select>
           </label>
           <div className="journey-picker__controls">
-            <button className="btn" type="submit">
+            <button
+              onClick={handleSubmit}
+              className="btn"
+              type="submit"
+              disabled={fromCity === '' || toCity === '' || date === ''}
+            >
               Vyhledat spoj
             </button>
           </div>
