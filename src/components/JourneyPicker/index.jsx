@@ -1,11 +1,22 @@
 import React, { useEffect, useState } from 'react';
+import { CityOptions } from '../CityOptions';
 import mapImage from './img/map.svg';
 import './style.css';
 
 export const JourneyPicker = ({ onJourneyChange }) => {
-  const [fromCity, setFromCity] = useState('Ahoj');
+  const [fromCity, setFromCity] = useState('');
   const [toCity, setToCity] = useState('');
   const [date, setDate] = useState('');
+  const [cities, setCities] = useState([]);
+  useEffect(() => {
+    fetch('https://apps.kodim.cz/daweb/leviexpress/api/cities')
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        setCities(data.results);
+      });
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -21,35 +32,20 @@ export const JourneyPicker = ({ onJourneyChange }) => {
           <label>
             <div className="journey-picker__label">Odkud:</div>
             <select onChange={(udalost) => setFromCity(udalost.target.value)}>
-              <option value="">Vyberte</option>
-              <option value="mesto01">Město 01</option>
-              <option value="mesto02">Město 02</option>
-              <option value="mesto03">Město 03</option>
-              <option value="mesto04">Město 04</option>
-              <option value="mesto05">Město 05</option>
+              <CityOptions cities={cities} />
             </select>
           </label>
           <label>
             <div className="journey-picker__label">Kam:</div>
             <select onChange={(udalost) => setToCity(udalost.target.value)}>
-              <option value="">Vyberte</option>
-              <option value="mesto01">Město 01</option>
-              <option value="mesto02">Město 02</option>
-              <option value="mesto03">Město 03</option>
-              <option value="mesto04">Město 04</option>
-              <option value="mesto05">Město 05</option>
+              <CityOptions cities={cities} />
             </select>
           </label>
           <label>
             <div className="journey-picker__label">Datum:</div>
-            <select onChange={(udalost) => setDate(udalost.target.value)}>
-              <option value="">Vyberte</option>
-              <option value="datum01">Datum 01</option>
-              <option value="datum02">Datum 02</option>
-              <option value="datum03">Datum 03</option>
-              <option value="datum04">Datum 04</option>
-              <option value="datum05">Datum 05</option>
-            </select>
+            <select
+              onChange={(udalost) => setDate(udalost.target.value)}
+            ></select>
           </label>
           <div className="journey-picker__controls">
             <button className="btn" type="submit">
